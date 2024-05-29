@@ -98,7 +98,9 @@ public class AutoConfigurationImportSelector implements DeferredImportSelector, 
 		if (!isEnabled(annotationMetadata)) {
 			return NO_IMPORTS;
 		}
+		// 获取内部编写的配置类的信息(仅包含项目使用的)
 		AutoConfigurationEntry autoConfigurationEntry = getAutoConfigurationEntry(annotationMetadata);
+		// 返回获取的配置类的类名完成导入操作
 		return StringUtils.toStringArray(autoConfigurationEntry.getConfigurations());
 	}
 
@@ -122,13 +124,18 @@ public class AutoConfigurationImportSelector implements DeferredImportSelector, 
 			return EMPTY_ENTRY;
 		}
 		AnnotationAttributes attributes = getAttributes(annotationMetadata);
+		// 获取候选的配置类
 		List<String> configurations = getCandidateConfigurations(annotationMetadata, attributes);
+		// 去除重复的配置类
 		configurations = removeDuplicates(configurations);
+		// 获取需要排除的配置类
 		Set<String> exclusions = getExclusions(annotationMetadata, attributes);
 		checkExcludedClasses(configurations, exclusions);
+		// 移除其中需要排除的配置类
 		configurations.removeAll(exclusions);
 		configurations = getConfigurationClassFilter().filter(configurations);
 		fireAutoConfigurationImportEvents(configurations, exclusions);
+		// 创建并返回配置类信息
 		return new AutoConfigurationEntry(configurations, exclusions);
 	}
 
@@ -179,9 +186,12 @@ public class AutoConfigurationImportSelector implements DeferredImportSelector, 
 	 * @return a list of candidate configurations
 	 */
 	protected List<String> getCandidateConfigurations(AnnotationMetadata metadata, AnnotationAttributes attributes) {
+		// 通过spring.factories文件或者org.springframework.boot.autoconfigure.AutoConfiguration.imports文件进行加载配置信息
+		// 最终configurations集合包含的就是这两个配置文件中的类的信息(文件中的内容就是配置类的集合)
 		List<String> configurations = new ArrayList<>(
 				SpringFactoriesLoader.loadFactoryNames(getSpringFactoriesLoaderFactoryClass(), getBeanClassLoader()));
 		ImportCandidates.load(AutoConfiguration.class, getBeanClassLoader()).forEach(configurations::add);
+		// 从下面的断言可以发现上述所说的两种文件
 		Assert.notEmpty(configurations,
 				"No auto configuration classes found in META-INF/spring.factories nor in META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports. If you "
 						+ "are using a custom packaging, make sure that file is correct.");

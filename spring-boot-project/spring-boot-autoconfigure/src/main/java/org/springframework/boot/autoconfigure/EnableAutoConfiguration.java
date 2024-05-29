@@ -80,7 +80,11 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
+// 开启自动扫描包
+// 获取前面定义的包规则并扫包
 @AutoConfigurationPackage
+// 通过导入类完成各种配置类的加载工作
+// 这样最终省去我们自行编写配置类的工作
 @Import(AutoConfigurationImportSelector.class)
 public @interface EnableAutoConfiguration {
 

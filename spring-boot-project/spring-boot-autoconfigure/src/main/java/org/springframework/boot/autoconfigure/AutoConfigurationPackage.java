@@ -38,6 +38,7 @@ import org.springframework.context.annotation.Import;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
+// 通过导入类进行最终的扫描包的工作
 @Import(AutoConfigurationPackages.Registrar.class)
 public @interface AutoConfigurationPackage {
 

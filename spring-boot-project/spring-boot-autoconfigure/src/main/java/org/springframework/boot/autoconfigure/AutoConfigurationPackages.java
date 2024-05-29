@@ -105,10 +105,17 @@ public abstract class AutoConfigurationPackages {
 	 * configuration.
 	 */
 	static class Registrar implements ImportBeanDefinitionRegistrar, DeterminableImports {
-
+		/**
+		 * 扫描包的核心方法
+		 * @param metadata 用于获取注解的元数据
+		 * @param registry 注册组件的定义信息
+		 */
 		@Override
 		public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
-			register(registry, new PackageImports(metadata).getPackageNames().toArray(new String[0]));
+			// 获取注解上定义的需要扫描的包的包装对象
+			PackageImports packageImports = new PackageImports(metadata);
+			// 通过需要扫描的包进行组件定义信息的注册
+			register(registry, packageImports.getPackageNames().toArray(new String[0]));
 		}
 
 		@Override
